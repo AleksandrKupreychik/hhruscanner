@@ -1,2 +1,8 @@
+api:
+  hhru: "https://api.hh.ru/"
+
 server:
   port: 8081
+logging:
+  level:
+    root: info
