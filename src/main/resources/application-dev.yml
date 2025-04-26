@@ -6,3 +6,13 @@ server:
 logging:
   level:
     root: info
+spring:
+  application:
+    name: "hhruscanner"
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+  topic:
+    newVacancies: "newVacancies"
