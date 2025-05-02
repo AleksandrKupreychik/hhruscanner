@@ -1,4 +1,4 @@
-package com.example.hhruscanner.controller;
+package com.example.hhruscanner.controller.search;
 
 import com.example.hhruscanner.domain.Vacancy;
 import lombok.Data;

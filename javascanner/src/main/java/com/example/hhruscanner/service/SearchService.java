@@ -2,7 +2,7 @@ package com.example.hhruscanner.service;
 
 import com.example.hhruscanner.client.HhRuClient;
 import com.example.hhruscanner.client.VacancyResponse;
-import com.example.hhruscanner.controller.SearchResponse;
+import com.example.hhruscanner.controller.search.SearchResponse;
 import com.example.hhruscanner.domain.Vacancy;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

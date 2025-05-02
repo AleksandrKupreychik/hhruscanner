@@ -10,7 +10,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 @Slf4j
 @Service
 public class KafkaMessageProducer {
-    @Value("spring.kafka.topic.newVacancies")
+    @Value("${topic.newVacancies}")
     private String NEW_VACANCIES_TOPIC;
     private final KafkaTemplate<String, KafkaMessage> kafkaTemplate;
 

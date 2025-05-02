@@ -1,6 +1,8 @@
 package com.example.hhruscanner.service;
 
 import com.example.hhruscanner.domain.Vacancy;
+import com.example.hhruscanner.kafka.KafkaMessageProducer;
+import com.example.hhruscanner.kafka.VacancyMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -12,7 +14,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -26,6 +27,8 @@ public class VacancyFetcher {
     private final SearchService searchService;
     private final ApplyService applyService;
 
+    private final KafkaMessageProducer kafkaMessageProducer;
+
 
     @Scheduled(fixedRate = UPDATE_TIME_MILLS)
     public void newVacancySeeker() {
@@ -37,12 +40,17 @@ public class VacancyFetcher {
                 .stream()
                 .map(vac -> searchService.getVacancy(vac.getId()))
                 .filter(this::isRealNewVacancy)
-                .collect(Collectors.toList());
+                .toList();
         log.info("\u001B[32m" + "find vacancies = {}" + "\u001B[0m", items.size());
-        applyService.applyVacancies(items);
+       // applyService.applyVacancies(items);
+        items.stream()
+                .map(v -> new VacancyMessage(v.getEmployer().getName(),v.getName(), v.getAlternateUrl()))
+                .forEach(kafkaMessageProducer::sendNewVacancyMessage);
     }
 
     private boolean isRealNewVacancy(Vacancy v) {
+        log.info("\u001B[32m" + "vacancy: {} published:{} created:{} " + "\u001B[0m",
+                v.getAlternateUrl(), v.getCreatedAt(), v.getInitialCreatedAt());
         LocalDateTime createDate = LocalDateTime.parse(fixTimezoneFormat(v.getInitialCreatedAt()),
                 DateTimeFormatter.ISO_OFFSET_DATE_TIME);
         LocalDateTime publishDate = LocalDateTime.parse(fixTimezoneFormat(v.getCreatedAt()),
