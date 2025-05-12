@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 @AutoConfiguration
 @EnableAsync
-@EnableFeignClients(basePackages = "com.example.hhruscanner.client")
+@EnableFeignClients
 public class HhruScannerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(HhruScannerApplication.class, args);

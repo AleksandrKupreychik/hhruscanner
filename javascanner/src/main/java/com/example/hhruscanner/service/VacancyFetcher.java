@@ -5,6 +5,7 @@ import com.example.hhruscanner.kafka.KafkaMessageProducer;
 import com.example.hhruscanner.kafka.VacancyMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -19,9 +20,12 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class VacancyFetcher {
-    private final String SEARCH_TEXT_JAVA = "java";
-    private final int PROF_ID_DEVELOPER = 96;
-    private final String REMOTE_SCHEDULE = "remote";
+    @Value("${params.search_text}")
+    private String SEARCH_TEXT;
+    @Value("${params.prof_id}")
+    private int PROF_ID;
+    @Value("${params.schedule}")
+    private String SCHEDULE;
     private final int UPDATE_TIME_MILLS = 600000;
 
     private final SearchService searchService;
@@ -35,16 +39,16 @@ public class VacancyFetcher {
         ZonedDateTime dateTime = Instant.now().minusMillis(UPDATE_TIME_MILLS).atZone(ZoneId.of("Europe/Moscow"));
         String isoDate = dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
         log.info("\u001B[32m" + "Time: {} " + "\u001B[0m", isoDate);
-        List<Vacancy> items = searchService.getVacs(null, SEARCH_TEXT_JAVA, isoDate, PROF_ID_DEVELOPER, REMOTE_SCHEDULE)
+        List<Vacancy> items = searchService.getVacs(null, SEARCH_TEXT, isoDate, PROF_ID, SCHEDULE)
                 .getVacancyList()
                 .stream()
                 .map(vac -> searchService.getVacancy(vac.getId()))
                 .filter(this::isRealNewVacancy)
                 .toList();
         log.info("\u001B[32m" + "find vacancies = {}" + "\u001B[0m", items.size());
-       // applyService.applyVacancies(items);
+        // applyService.applyVacancies(items);
         items.stream()
-                .map(v -> new VacancyMessage(v.getEmployer().getName(),v.getName(), v.getAlternateUrl()))
+                .map(v -> new VacancyMessage(v.getEmployer().getName(), v.getName(), v.getAlternateUrl()))
                 .forEach(kafkaMessageProducer::sendNewVacancyMessage);
     }
 

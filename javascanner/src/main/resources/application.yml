@@ -2,10 +2,7 @@ api:
   hhru: "https://api.hh.ru/"
 
 server:
-  port: 8081
-logging:
-  level:
-    root: info
+  port: 8085
 spring:
   application:
     name: "hhruscanner"
@@ -14,7 +11,17 @@ spring:
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
-
+params:
+  search_text: "java"
+  schedule: "remote"
+  prof_id: 96
 
 topic:
   newVacancies: "newVacancies"
+
+logging:
+  level:
+    com:
+      example:
+        hhruscanner:
+          client: debug

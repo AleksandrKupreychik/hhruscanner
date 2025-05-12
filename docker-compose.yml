@@ -21,9 +21,29 @@
         KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
         KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
         KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-
+        KAFKA_LOG4J_OPTS: "-Dlog4j.rootLogger=ERROR"
+                
     hhruscanner:
       build: ./javascanner
+      depends_on:
+        - kafka
       ports:
         - 8081:8081
+      environment:
+        SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092
+        PARAMS_SEARCH_TEXT: java # как пример можно написать "golang от 300000"
+        PARAMS_PROF_ID: 96 #96-программист разработчик
+        PARAMS_SCHEDULE: remote #remote - удаленка
+      restart: always
+      
+    tgbot:
+      build: ./gotgbot
+      depends_on:
+        - kafka
+      ports:
+        - 8082:8082
+      environment:
+        KAFKA_BROKER: kafka:9092
+        CHAT_ID:  #нужно указать id чата куда слать
+        TELEGRAM_TOKEN:  #токен бота
       restart: always
