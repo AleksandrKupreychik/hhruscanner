@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim as builder
+FROM openjdk:17.0.1-slim as builder
 WORKDIR /opt/app
 COPY pom.xml ./
 COPY .mvn .mvn
@@ -9,7 +9,7 @@ RUN dos2unix ./mvnw
 RUN ./mvnw dependency:go-offline
 RUN ./mvnw clean install
 
-FROM openjdk:17-jdk-slim
+FROM openjdk:17.0.1-slim
 WORKDIR /opt/app
 COPY --from=builder /opt/app/target/*.jar /opt/app/app.jar
 EXPOSE 8081
