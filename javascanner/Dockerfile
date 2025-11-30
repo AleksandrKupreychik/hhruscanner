@@ -1,4 +1,4 @@
-FROM openjdk:17-jdk-slim as builder
+FROM openjdk:17.0.1-slim as builder
 WORKDIR /opt/app
 COPY pom.xml ./
 COPY .mvn .mvn
