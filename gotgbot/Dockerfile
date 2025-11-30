@@ -4,6 +4,7 @@ ENV CGO_ENABLED=0 \
     GOOS=linux
 COPY . .
 RUN go mod download
+RUN go mod tidy
 RUN go build -o service
 
 
